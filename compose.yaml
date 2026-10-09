@@ -35,7 +35,10 @@ services:
     container_name: ecommerce-api-container
 
     restart: unless-stopped
-
+    command: >
+      sh -c "npx prisma migrate deploy &&
+      npm run seed &&
+      npm start"
     environment:
       NODE_ENV: production
       PORT: 3000
