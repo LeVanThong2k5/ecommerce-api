@@ -3,12 +3,17 @@ import prisma from "../src/config/prisma.js";
 async function main() {
   console.log("Start seeding...");
 
-  // Role
+  // =========================
+  // ROLE
+  // =========================
+
   await prisma.role.upsert({
     where: {
       roleid: 1
     },
-    update: {},
+    update: {
+      rolename: "ADMIN"
+    },
     create: {
       roleid: 1,
       rolename: "ADMIN"
@@ -19,23 +24,31 @@ async function main() {
     where: {
       roleid: 2
     },
-    update: {},
+    update: {
+      rolename: "normal"
+    },
     create: {
       roleid: 2,
-      rolename: "CUSTOMER"
+      rolename: "normal"
     }
   });
 
-  // Membership
+  // =========================
+  // MEMBERSHIP
+  // =========================
+
   await prisma.membership.upsert({
     where: {
       mid: 1
     },
-    update: {},
+    update: {
+      mname: "BASIC",
+      score: 10
+    },
     create: {
       mid: 1,
       mname: "BASIC",
-      score: 0
+      score: 10
     }
   });
 
@@ -43,7 +56,10 @@ async function main() {
     where: {
       mid: 2
     },
-    update: {},
+    update: {
+      mname: "SILVER",
+      score: 100
+    },
     create: {
       mid: 2,
       mname: "SILVER",
@@ -55,7 +71,10 @@ async function main() {
     where: {
       mid: 3
     },
-    update: {},
+    update: {
+      mname: "GOLD",
+      score: 500
+    },
     create: {
       mid: 3,
       mname: "GOLD",

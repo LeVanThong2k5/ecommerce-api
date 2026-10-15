@@ -2,6 +2,7 @@ import prisma from "../config/prisma.js";
 
 export async function createOrder(uid, items) {
   return prisma.$transaction(async (tx) => {
+    // 1. Tạo Order
     const order = await tx.order.create({
       data: {
         uid,
@@ -9,6 +10,7 @@ export async function createOrder(uid, items) {
       }
     });
 
+    // 2. Tạo OrderDetail và trừ tồn kho
     for (const item of items) {
       const product = await tx.product.findUnique({
         where: {
@@ -49,6 +51,15 @@ export async function createOrder(uid, items) {
       });
     }
 
+    // 3. Đặt hàng thành công -> tự động tạo Shipment
+    await tx.shipment.create({
+      data: {
+        oid: order.oid,
+        status: "PENDING"
+      }
+    });
+
+    // 4. Trả về Order + Detail + Product + Shipment
     return tx.order.findUnique({
       where: {
         oid: order.oid
@@ -58,11 +69,13 @@ export async function createOrder(uid, items) {
           include: {
             product: true
           }
-        }
+        },
+        shipments: true
       }
     });
   });
 }
+
 export async function getOrdersByUser(uid) {
   return prisma.order.findMany({
     where: {
@@ -76,10 +89,12 @@ export async function getOrdersByUser(uid) {
         include: {
           product: true
         }
-      }
+      },
+      shipments: true
     }
   });
 }
+
 export async function getOrderById(oid) {
   return prisma.order.findUnique({
     where: {
@@ -90,7 +105,8 @@ export async function getOrderById(oid) {
         include: {
           product: true
         }
-      }
+      },
+      shipments: true
     }
   });
-}   
+}

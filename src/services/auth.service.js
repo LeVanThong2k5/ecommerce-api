@@ -35,7 +35,7 @@ export async function registerUser({
 }) {
   const customerRole = await prisma.role.findFirst({
     where: {
-      rolename: "CUSTOMER"
+      rolename: "normal"
     }
   });
 
